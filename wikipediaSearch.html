@@ -1,0 +1,64 @@
+<html class=""><head><style type="text/css">@charset "UTF-8";[ng\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\:form{display:block;}.ng-animate-shim{visibility:hidden;}.ng-anchor{position:absolute;}</style><script src="//production-assets.codepen.io/assets/editor/live/console_runner-5710c30fb566082d9fcb6e7d97ee7e3f2a326128c9f334a4231b6fd752b29965.js"></script><script src="//production-assets.codepen.io/assets/editor/live/events_runner-d5e4bf42585b8da8c18f7d963dbfc17cd66a79aa586c9448c4de8d6952ee9d97.js"></script><script src="//production-assets.codepen.io/assets/editor/live/css_live_reload_init-25d1423d5d6fb975e7d61832d2c061422a94963ca446583b965dfc5569147311.js"></script><meta charset="UTF-8"><meta name="robots" content="noindex"><link rel="shortcut icon" type="image/x-icon" href="//production-assets.codepen.io/assets/favicon/favicon-8ea04875e70c4b0bb41da869e81236e54394d63638a1ef12fa558a4a835f1164.ico"><link rel="mask-icon" type="" href="//production-assets.codepen.io/assets/favicon/logo-pin-f2d2b6d2c61838f7e76325261b7195c27224080bc099486ddd6dccb469b8e8e6.svg" color="#111"><link rel="canonical" href="https://codepen.io/bondy/pen/xOVJXW">
+
+<link rel="stylesheet prefetch" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+<style class="cp-pen-styles"></style></head><body ng-app="getWiki" class="ng-scope">
+
+
+
+
+    <title>GET WIKI</title>
+
+
+
+    <nav class="navbar navbar-default navbar-inverse">
+        <div class="navbar-brand">Wikipedia search engine</div>
+    </nav>
+    <div class="container ng-scope" ng-controller="searchWiki">
+        <a target="_blank" href="https://en.wikipedia.org/wiki/Special:random"><p>Click Here for a random article</p></a>
+        <div class="row">
+            <div class="col-xs-6">
+                <div class="input-group">
+                    <span class="input-group-btn">
+        				<button class="btn btn-default" type="button" ng-click="getWikiJSON(search)">Go!</button>
+      				</span>
+                    <input type="text" class="form-control ng-pristine ng-untouched ng-valid ng-empty" ng-model="search" placeholder="Search for...">
+                </div>
+            </div>
+        </div>
+        <!-- /input-group -->
+        <br>
+        <!-- ngRepeat: item in wikiList -->
+    </div>
+
+
+
+
+<script src="//production-assets.codepen.io/assets/common/stopExecutionOnTimeout-58d22c749295bca52f487966e382a94a495ac103faca9206cbd160bdf8aedf2a.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.5/angular.min.js"></script>
+<script>var wiki = angular.module('getWiki', []);
+wiki.controller('searchWiki', [
+    '$scope',
+    '$http',
+    function ($scope, $http) {
+        var search_query = 'https://en.wikipedia.org/w/api.php?action=opensearch&limit=10&namespace=0&format=json&callback=JSON_CALLBACK&search=';
+        $scope.getWikiJSON = function (search) {
+            $scope.wikiList = [];
+            $http.jsonp(search_query + search).then(function (jsonObj) {
+                console.log(jsonObj.data);
+                for (var i = 0; i < 10; i++) {
+                    if (window.CP.shouldStopExecution(1)) {
+                        break;
+                    }
+                    var wikiObj = {};
+                    wikiObj['title'] = jsonObj.data[1][i];
+                    wikiObj['text'] = jsonObj.data[2][i];
+                    wikiObj['link'] = jsonObj.data[3][i];
+                    $scope.wikiList.push(wikiObj);
+                }
+                window.CP.exitedLoop(1);
+            });
+        };
+    }
+]);
+//# sourceURL=pen.js
+</script>
+</body></html>
